@@ -121,6 +121,13 @@ export const YourBackendUsingReclaim = {
               ? expertSettings.useDeferredDeepLinksFlow
               : undefined,
         },
+        useAppClip: typeof expertSettings.useAppClip === 'boolean' ? expertSettings.useAppClip : undefined,
+        customAppClipUrl: expertSettings.customAppClipUrl
+          ? expertSettings.customAppClipUrl
+          : undefined,
+        extensionID: expertSettings.extensionID ? expertSettings.extensionID : undefined,
+        envUrl: expertSettings.envUrl && typeof expertSettings.envUrl === 'string' ? expertSettings.envUrl : undefined,
+        useBrowserExtension: typeof expertSettings.useBrowserExtension === 'boolean' ? expertSettings.useBrowserExtension : undefined,
         canAutoSubmit: expertSettings.canAutoSubmit ?? true,
         metadata: expertSettings.metadata
           ? JSON.parse(expertSettings.metadata)

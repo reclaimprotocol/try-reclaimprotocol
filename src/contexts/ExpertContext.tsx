@@ -28,6 +28,11 @@ const defaultSettings: ExpertSettings = {
   useDeferredDeepLinksFlow: true,
   canAutoSubmit: true,
   metadata: "",
+  useAppClip: true,
+  customAppClipUrl: "",
+  extensionID: "",
+  envUrl: null,
+  useBrowserExtension: true
 };
 
 const ExpertContext = createContext<ExpertContextType | undefined>(undefined);
