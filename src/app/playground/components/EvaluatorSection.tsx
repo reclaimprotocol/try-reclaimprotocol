@@ -15,13 +15,13 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
   const [path, setPath] = useState("");
   const [data, setData] = useState("");
   const [error, setError] = useState<any | null>(null);
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<null | string>(null);
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
   const handleEvaluate = async () => {
     setLoading(true);
-    setResult("");
+    setResult(null);
     try {
       const input = data;
       if (!input || !path) {
@@ -89,7 +89,7 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         >
           {loading ? "Evaluating..." : "Evaluate"}
         </button>
-        {result && (
+        {typeof result === 'string' && (
           <div className="result-box mt-4">
             <div className="flex justify-between items-center mb-2">
               <strong>Evaluation Result:</strong>
@@ -121,7 +121,7 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         title="Evaluation Result"
         copy={{
           label: "Result",
-          getDataForCopy: () => result,
+          getDataForCopy: () => result ?? '',
         }}
       >
         <pre className="text-xs sm:text-sm font-mono text-gray-800 whitespace-pre-wrap break-all leading-relaxed text-left">
