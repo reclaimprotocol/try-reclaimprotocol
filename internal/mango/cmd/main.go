@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-package mxain
+package main
 
 import (
 	"syscall/js"
