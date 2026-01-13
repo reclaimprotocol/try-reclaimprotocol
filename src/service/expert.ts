@@ -10,6 +10,11 @@ export interface ExpertSettings {
   appSecret: string;
   sharePageUrl: string;
   useDeferredDeepLinksFlow: boolean;
+  useAppClip: boolean;
+  customAppClipUrl: string;
+  extensionID: string;
+  envUrl: string | null;
+  useBrowserExtension: boolean;
   /**
    * @since 4.7.0
    */

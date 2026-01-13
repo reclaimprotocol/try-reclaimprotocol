@@ -8,7 +8,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	jp "github.com/reclaimprotocol/jsonpathplus-go"
+	jp "github.com/reclaimprotocol/jsonpathplus-go/v2"
 	xp "github.com/reclaimprotocol/xpath-go"
 
 	gojson "github.com/coreos/go-json"

@@ -221,6 +221,78 @@ function Page() {
           onChange={(e) => updateSettings({ sharePageUrl: e.target.value })}
         />
       </div>
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Use App Clip</div>
+        <div className="setting-desc">
+          Whether to use App Clip for verification.
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings.useAppClip}
+            disabled={!settings.isExpertModeEnabled}
+            onChange={(e) =>
+              updateSettings({ useAppClip: e.target.checked })
+            }
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Custom App Clip URL</div>
+        <div className="setting-desc">
+          URL for the custom App Clip.
+        </div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="Enter Custom App Clip URL"
+          value={settings.customAppClipUrl}
+          onChange={(e) => updateSettings({ customAppClipUrl: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Extension ID</div>
+        <div className="setting-desc">
+          The ID of the browser extension.
+        </div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="Enter Extension ID"
+          value={settings.extensionID}
+          onChange={(e) => updateSettings({ extensionID: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Use Browser Extension</div>
+        <div className="setting-desc">
+          Whether to use the browser extension for verification.
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings.useBrowserExtension}
+            disabled={!settings.isExpertModeEnabled}
+            onChange={(e) =>
+              updateSettings({ useBrowserExtension: e.target.checked })
+            }
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
 
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
@@ -235,6 +307,22 @@ function Page() {
           placeholder='{"key": "value"}'
           value={settings.metadata}
           onChange={(e) => updateSettings({ metadata: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Env URL</div>
+        <div className="setting-desc">
+          Environment URL.
+        </div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="Enter Env URL"
+          value={settings.envUrl || ""}
+          onChange={(e) => updateSettings({ envUrl: e.target.value })}
         />
       </div>
 
