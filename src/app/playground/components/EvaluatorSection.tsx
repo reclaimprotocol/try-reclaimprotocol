@@ -8,7 +8,7 @@ interface EvaluatorSectionProps {
   evaluate: (
     path: string,
     data: string,
-  ) => ReclaimStringsResult[] | Promise<ReclaimStringsResult[]>;
+  ) => null | ReclaimStringsResult[] | Promise<ReclaimStringsResult[] | null>;
 }
 
 export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
@@ -34,9 +34,19 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         setLoading(false);
         return;
       }
-      const res = await evaluate(path, input);
+
+      console.info({ args: { path, input } });
+      const result = await evaluate(path, input);
+      console.info({ result });
+
+      if (!result || (Array.isArray(result) && result.length === 0)) {
+        setError("No results found");
+        setLoading(false);
+        return;
+      }
+
       let firstResult = null;
-      for (const record of res) {
+      for (const record of result) {
         if (firstResult === null) {
           firstResult = record;
           continue;
@@ -54,10 +64,11 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         setError("No results found");
       }
     } catch (error) {
-      console.error(error);
+      console.error({ error });
       setError(error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -110,7 +121,7 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         {error && (
           <div className="error-box mt-4">
             <strong>Error:</strong>
-            <p>{getErrorMessage(error)}</p>
+            <p>{getErrorMessage(error).replace("reclaimStrings.", "")}</p>
           </div>
         )}
       </div>
