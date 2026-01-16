@@ -77,7 +77,7 @@ function Page() {
           <DocLink href="https://docs.reclaimprotocol.org/js-sdk/generating-proof#trigger-the-proof-generation-flow-with-the-user" />
         </div>
         <div className="setting-desc">
-          Change how the flow starts. `js-sdk` will use .triggerReclaimFlow
+          Change how the flow starts. `js-sdk` will use `.triggerReclaimFlow`
           function from Reclaim SDK to start the flow. `windowopen` will open
           the flow in a new window. `none` will not start the flow
           automatically. (applies to this demo only).
@@ -319,8 +319,11 @@ function Page() {
       >
         <div className="setting-title">Metadata</div>
         <div className="setting-desc">
-          Additional metadata to pass to the verification client. JSON string of
-          metadata.
+          Additional metadata to pass as JSON string to the verification client.
+          This can be used to customize the client experience, such as
+          customizing themes or UI by passing context-specific information. The
+          keys and values must be strings. For most clients, this is not
+          required and goes unused.
         </div>
         <textarea
           className="input-tile"
@@ -334,7 +337,10 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">Env URL</div>
-        <div className="setting-desc">Environment URL.</div>
+        <div className="setting-desc">
+          URL of HTTP service that will be used from js sdk for reclaim sdk
+          operations like initializing a verification session.
+        </div>
         <input
           type="text"
           className="input-tile"
