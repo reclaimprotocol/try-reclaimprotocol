@@ -72,22 +72,30 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Auto Trigger Flow</div>
+        <div className="setting-title">Launch Method</div>
         <div className="setting-desc">
-          Starts the flow automatically when the verify page loads (applies to
+          Change how the flow starts. `js-sdk` will use .triggerReclaimFlow function
+          from Reclaim SDK to start the flow. `windowopen` will open the flow in a
+          new window. `none` will not start the flow automatically. (applies to
           this demo only).
         </div>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings.autoTriggerFlow}
-            disabled={!settings.isExpertModeEnabled}
-            onChange={(e) =>
-              updateSettings({ autoTriggerFlow: e.target.checked })
-            }
-          />
-          <span className="slider"></span>
-        </label>
+        <select
+          className="input-tile"
+          value={settings.launchMethod}
+          disabled={!settings.isExpertModeEnabled}
+          onChange={(e) =>
+            updateSettings({
+              launchMethod: e.target.value as
+                | "none"
+                | "js-sdk"
+                | "windowopen",
+            })
+          }
+        >
+          <option value="none">None</option>
+          <option value="js-sdk">JS SDK</option>
+          <option value="windowopen">Window Open</option>
+        </select>
       </div>
 
       <div

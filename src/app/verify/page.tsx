@@ -32,8 +32,8 @@ function Page() {
 
   // Ignore this section of the code, it's just for demo purposes.
   // ==== IGNORE START ====
-  const autoTriggerFlow = useSelectFromExpertSettings(
-    (settings) => settings.autoTriggerFlow,
+  const launchMethod = useSelectFromExpertSettings(
+    (settings) => settings.launchMethod,
   );
 
   useEffect(() => {
@@ -75,17 +75,32 @@ function Page() {
   // the appropriate Reclaim verification flow based on device type and configuration
   const launchReclaimFlow = useCallback(
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
-      proofRequest.triggerReclaimFlow().catch((error) => {
-        console.error("Failed to trigger reclaim flow", error);
-        setStatus("error");
-      });
+      switch (launchMethod) {
+        case 'js-sdk':
+          proofRequest.triggerReclaimFlow().catch((error) => {
+            console.error("Failed to trigger reclaim flow", error);
+            setStatus("error");
+          });
+          break;
+        case 'windowopen':
+          proofRequest.getRequestUrl().then((url) => {
+            setVerificationLink(url);
+            window.open(url, '_blank');
+          }).catch((error) => {
+            console.error("Failed to trigger reclaim flow", error);
+            setStatus("error");
+          });
+          break;
+        default:
+          break;
+      }
     },
-    [],
+    [launchMethod],
   );
 
   const startVerificationJourney = useCallback(
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
-      if (autoTriggerFlow) {
+      if (launchMethod == 'js-sdk' || launchMethod == 'windowopen') {
         launchReclaimFlow(proofRequest);
       }
 
@@ -163,7 +178,7 @@ function Page() {
 
       setStatus("verifying");
     },
-    [autoTriggerFlow, launchReclaimFlow, setStatusLiveBackground],
+    [launchMethod, launchReclaimFlow, setStatusLiveBackground],
   );
 
   useEffect(() => {
