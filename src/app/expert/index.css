@@ -113,4 +113,22 @@ input:checked + .slider:before {
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  pointer-events: none;
+  /* Let clicks pass through empty space */
+}
+
+.save-btn-container > button {
+  pointer-events: auto;
+  /* Re-enable clicks on buttons */
+}
+
+@media (max-width: 480px) {
+  .save-btn-container {
+    left: 36.7%;
+  }
 }

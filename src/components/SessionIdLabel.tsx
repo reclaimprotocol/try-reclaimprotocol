@@ -26,7 +26,7 @@ export const SessionIdLabel: React.FC<SessionIdLabelProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-center gap-2 group hover:bg-gray-200/20 rounded-lg transition-all px-2 py-1 cursor-pointer ${className}`}
+      className={`flex items-center justify-center gap-2 group hover:bg-gray-200/60 rounded-lg transition-all px-2 py-1 cursor-pointer ${className}`}
       onClick={handleCopySessionId}
     >
       <div className="flex flex-col items-center gap-1">

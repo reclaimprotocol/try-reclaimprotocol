@@ -74,10 +74,10 @@ function Page() {
       >
         <div className="setting-title">Launch Method</div>
         <div className="setting-desc">
-          Change how the flow starts. `js-sdk` will use .triggerReclaimFlow function
-          from Reclaim SDK to start the flow. `windowopen` will open the flow in a
-          new window. `none` will not start the flow automatically. (applies to
-          this demo only).
+          Change how the flow starts. `js-sdk` will use .triggerReclaimFlow
+          function from Reclaim SDK to start the flow. `windowopen` will open
+          the flow in a new window. `none` will not start the flow
+          automatically. (applies to this demo only).
         </div>
         <select
           className="input-tile"
@@ -85,10 +85,7 @@ function Page() {
           disabled={!settings.isExpertModeEnabled}
           onChange={(e) =>
             updateSettings({
-              launchMethod: e.target.value as
-                | "none"
-                | "js-sdk"
-                | "windowopen",
+              launchMethod: e.target.value as "none" | "js-sdk" | "windowopen",
             })
           }
         >
@@ -241,9 +238,7 @@ function Page() {
             type="checkbox"
             checked={settings.useAppClip}
             disabled={!settings.isExpertModeEnabled}
-            onChange={(e) =>
-              updateSettings({ useAppClip: e.target.checked })
-            }
+            onChange={(e) => updateSettings({ useAppClip: e.target.checked })}
           />
           <span className="slider"></span>
         </label>
@@ -253,9 +248,7 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">Custom App Clip URL</div>
-        <div className="setting-desc">
-          URL for the custom App Clip.
-        </div>
+        <div className="setting-desc">URL for the custom App Clip.</div>
         <input
           type="text"
           className="input-tile"
@@ -269,9 +262,7 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">Extension ID</div>
-        <div className="setting-desc">
-          The ID of the browser extension.
-        </div>
+        <div className="setting-desc">The ID of the browser extension.</div>
         <input
           type="text"
           className="input-tile"
@@ -301,7 +292,6 @@ function Page() {
         </label>
       </div>
 
-
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
@@ -322,9 +312,7 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">Env URL</div>
-        <div className="setting-desc">
-          Environment URL.
-        </div>
+        <div className="setting-desc">Environment URL.</div>
         <input
           type="text"
           className="input-tile"
@@ -365,7 +353,7 @@ function Page() {
       <div className="mb-10"></div>
 
       <div className="save-btn-container">
-        <button className="btn-secondary me-2" onClick={handleReset}>
+        <button className="btn-secondary" onClick={handleReset}>
           Reset Settings
         </button>
         <button className="btn-primary" onClick={handleSave}>

@@ -100,7 +100,7 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         >
           {loading ? "Evaluating..." : "Evaluate"}
         </button>
-        {typeof result === 'string' && (
+        {typeof result === "string" && (
           <div className="result-box mt-4">
             <div className="flex justify-between items-center mb-2">
               <strong>Evaluation Result:</strong>
@@ -132,7 +132,7 @@ export function EvaluatorSection({ title, evaluate }: EvaluatorSectionProps) {
         title="Evaluation Result"
         copy={{
           label: "Result",
-          getDataForCopy: () => result ?? '',
+          getDataForCopy: () => result ?? "",
         }}
       >
         <pre className="text-xs sm:text-sm font-mono text-gray-800 whitespace-pre-wrap break-all leading-relaxed text-left">

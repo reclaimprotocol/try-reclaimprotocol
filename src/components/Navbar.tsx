@@ -1,6 +1,32 @@
 import { NavLink } from "react-router";
+import { useState, useRef } from "react";
+import {
+  useExpertContext,
+  defaultSettings,
+  useSelectFromExpertSettings,
+} from "../contexts/ExpertContext";
+import { ModifiedExpertOptionsPreview } from "./ModifiedExpertOptionsPreview";
 
 export const Navbar = () => {
+  const { settings } = useExpertContext();
+  const isExpertModeEnabled = useSelectFromExpertSettings(
+    (settings) => settings.isExpertModeEnabled,
+  );
+
+  // Double tap logic
+  const [forceVisible, setForceVisible] = useState(false);
+  const lastTapRef = useRef<number>(0);
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTapRef.current;
+    if (tapLength < 300 && tapLength > 0) {
+      setForceVisible((prev) => !prev);
+      e.preventDefault(); // Prevent click/navigation on double tap
+    }
+    lastTapRef.current = currentTime;
+  };
+
   return (
     <nav className="navbar">
       <div className="flex gap-6 items-center">
@@ -11,12 +37,35 @@ export const Navbar = () => {
         >
           Home
         </NavLink>
-        <NavLink
-          to="/expert"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+        <div
+          className="relative group flex items-center h-full select-none"
+          // Add touch listeners for mobile double tap
+          onTouchEnd={handleTouchEnd}
+          onContextMenu={(_) => {
+            // Optional: may want to prevent default context menu if it interferes
+          }}
         >
-          Expert
-        </NavLink>
+          <NavLink
+            to="/expert"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+            end
+          >
+            Expert
+          </NavLink>
+          {isExpertModeEnabled && (
+            <>
+              <span
+                className={`absolute -top-1 -right-2 w-2 h-2 rounded-full ${
+                  settings.parameters !== defaultSettings.parameters ||
+                  settings.providerVersion !== defaultSettings.providerVersion
+                    ? "bg-red-500"
+                    : "bg-yellow-500"
+                }`}
+              />
+              <ModifiedExpertOptionsPreview forceVisible={forceVisible} />
+            </>
+          )}
+        </div>
         <NavLink
           to="/playground"
           className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
