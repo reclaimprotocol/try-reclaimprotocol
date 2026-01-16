@@ -72,7 +72,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Launch Method</div>
+        <div className="setting-title">
+          Launch Method
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/generating-proof#trigger-the-proof-generation-flow-with-the-user" />
+        </div>
         <div className="setting-desc">
           Change how the flow starts. `js-sdk` will use .triggerReclaimFlow
           function from Reclaim SDK to start the flow. `windowopen` will open
@@ -141,7 +144,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Parameters</div>
+        <div className="setting-title">
+          Parameters
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-parameters" />
+        </div>
         <div className="setting-desc">
           JSON string of parameters to override.
         </div>
@@ -173,7 +179,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Callback URL</div>
+        <div className="setting-title">
+          Callback URL
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-callback" />
+        </div>
         <div className="setting-desc">URL to receive proof callbacks.</div>
         <input
           type="text"
@@ -187,7 +196,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Context</div>
+        <div className="setting-title">
+          Context
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-context" />
+        </div>
         <div className="setting-desc">JSON string for additional context.</div>
         <textarea
           className="input-tile"
@@ -214,7 +226,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Share Page URL</div>
+        <div className="setting-title">
+          Share Page URL
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#forcing-remote-browser-use" />
+        </div>
         <div className="setting-desc">
           URL to the page which decides where verification should happen.
         </div>
@@ -226,6 +241,7 @@ function Page() {
           onChange={(e) => updateSettings({ sharePageUrl: e.target.value })}
         />
       </div>
+
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
@@ -261,7 +277,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Extension ID</div>
+        <div className="setting-title">
+          Extension ID
+          <DocLink href="https://docs.reclaimprotocol.org/browser-extension#overview" />
+        </div>
         <div className="setting-desc">The ID of the browser extension.</div>
         <input
           type="text"
@@ -275,7 +294,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Use Browser Extension</div>
+        <div className="setting-title">
+          Use Browser Extension
+          <DocLink href="https://docs.reclaimprotocol.org/browser-extension#overview" />
+        </div>
         <div className="setting-desc">
           Whether to use the browser extension for verification.
         </div>
@@ -325,7 +347,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">App ID</div>
+        <div className="setting-title">
+          App ID
+          <DocLink href="https://docs.reclaimprotocol.org/api-key#copy-your-application-id-and-secret" />
+        </div>
         <div className="setting-desc">Your Reclaim App ID.</div>
         <input
           type="text"
@@ -339,7 +364,10 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">App Secret</div>
+        <div className="setting-title">
+          App Secret
+          <DocLink href="https://docs.reclaimprotocol.org/api-key#copy-your-application-id-and-secret" />
+        </div>
         <div className="setting-desc">Your Reclaim App Secret.</div>
         <input
           type="password"
@@ -365,3 +393,31 @@ function Page() {
 }
 
 export default Page;
+
+const DocLink = ({ href }: { href: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center ms-2 text-xs text-gray-400 hover:text-blue-500 transition-colors align-text-center"
+    onClick={(e) => e.stopPropagation()}
+    title="View Documentation"
+  >
+    <span className="me-1">View Documentation</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>
+  </a>
+);
