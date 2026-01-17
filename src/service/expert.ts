@@ -1,6 +1,6 @@
 export interface ExpertSettings {
   isExpertModeEnabled: boolean;
-  launchMethod: 'none' | 'js-sdk' | 'windowopen';
+  launchMethod: "none" | "js-sdk" | "windowopen";
   callbackUrl: string;
   parameters: string; // JSON string
   context: string; // JSON string

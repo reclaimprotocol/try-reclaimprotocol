@@ -14,9 +14,9 @@ interface ExpertContextType {
   resetSettings: () => void;
 }
 
-const defaultSettings: ExpertSettings = {
+export const defaultSettings: ExpertSettings = {
   isExpertModeEnabled: false,
-  launchMethod: 'js-sdk',
+  launchMethod: "js-sdk",
   callbackUrl: "",
   parameters: "",
   context: "",
@@ -32,7 +32,7 @@ const defaultSettings: ExpertSettings = {
   customAppClipUrl: "",
   extensionID: "",
   envUrl: null,
-  useBrowserExtension: true
+  useBrowserExtension: true,
 };
 
 const ExpertContext = createContext<ExpertContextType | undefined>(undefined);

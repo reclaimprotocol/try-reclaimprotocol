@@ -10,6 +10,7 @@ import { ProviderAppInfoTile } from "../../components/ProviderAppInfoTile";
 import { useLiveBackground } from "../../components/LiveBackground";
 import WordLogo from "../../components/logo/WordLogo";
 import { useSelectFromExpertSettings } from "../../contexts/ExpertContext";
+import { Dialog } from "../../components/Dialog";
 
 type VerificationStatus = "starting" | "verifying" | "completed" | "error";
 
@@ -75,32 +76,39 @@ function Page() {
   // the appropriate Reclaim verification flow based on device type and configuration
   const launchReclaimFlow = useCallback(
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
+      if (proof) return;
+
       switch (launchMethod) {
-        case 'js-sdk':
+        case "js-sdk":
           proofRequest.triggerReclaimFlow().catch((error) => {
             console.error("Failed to trigger reclaim flow", error);
             setStatus("error");
           });
           break;
-        case 'windowopen':
-          proofRequest.getRequestUrl().then((url) => {
-            setVerificationLink(url);
-            window.open(url, '_blank');
-          }).catch((error) => {
-            console.error("Failed to trigger reclaim flow", error);
-            setStatus("error");
-          });
+        case "windowopen":
+          proofRequest
+            .getRequestUrl()
+            .then((url) => {
+              setVerificationLink(url);
+              window.open(url, "_blank");
+            })
+            .catch((error) => {
+              console.error("Failed to trigger reclaim flow", error);
+              setStatus("error");
+            });
           break;
         default:
           break;
       }
     },
-    [launchMethod],
+    [launchMethod, proof],
   );
 
   const startVerificationJourney = useCallback(
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
-      if (launchMethod == 'js-sdk' || launchMethod == 'windowopen') {
+      if (proof) return;
+
+      if (launchMethod == "js-sdk" || launchMethod == "windowopen") {
         launchReclaimFlow(proofRequest);
       }
 
@@ -178,7 +186,7 @@ function Page() {
 
       setStatus("verifying");
     },
-    [launchMethod, launchReclaimFlow, setStatusLiveBackground],
+    [launchMethod, launchReclaimFlow, setStatusLiveBackground, proof],
   );
 
   useEffect(() => {
@@ -230,6 +238,7 @@ function Page() {
         hasProof={!!proof}
         verificationLink={verificationLink}
         onLaunch={() => proofRequest && launchReclaimFlow(proofRequest)}
+        proofRequest={proofRequest}
       />
       {/* ==== IGNORE END ==== */}
 
@@ -275,12 +284,15 @@ const VerificationActions = ({
   verificationLink,
   onLaunch,
   hasProof,
+  proofRequest,
 }: {
   verificationLink: string;
   onLaunch: () => void;
   hasProof: boolean;
+  proofRequest: ReclaimProofRequest | null;
 }) => {
   const [copied, setCopied] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   const onCopy = async (): Promise<void> => {
     if (!verificationLink) {
@@ -296,59 +308,102 @@ const VerificationActions = ({
     }
   };
 
+  const getProofRequestJson = () => {
+    if (!proofRequest) return "{}";
+    try {
+      const json = proofRequest.toJsonString();
+      return JSON.stringify(JSON.parse(json), null, 2);
+    } catch (e) {
+      console.error(e);
+      return "{}";
+    }
+  };
+
   return (
-    <div className="flex flex-row items-center justify-center gap-4 mt-6 pt-2">
-      <button
-        className="flex items-center justify-center gap-1.5 bg-transparent border border-gray-600 text-gray-600 hover:border-gray-800 hover:text-gray-800 rounded-lg transition-all font-medium text-xs"
-        style={{ padding: "4px 12px", minWidth: "120px" }}
-        onClick={onCopy}
-      >
-        {copied ? (
-          <>
-            <span>Copied Link</span>
-            <svg
-              className="w-3.5 h-3.5 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </>
-        ) : (
-          <>
-            <span>Copy Link</span>
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              />
-            </svg>
-          </>
+    <div className="flex flex-col items-center gap-4 mt-6 pt-2">
+      <div className="flex flex-row items-center justify-center gap-4">
+        <button
+          className="flex items-center justify-center gap-1.5 bg-transparent border border-gray-600 text-gray-600 hover:border-gray-800 hover:text-gray-800 rounded-lg transition-all font-medium text-xs"
+          style={{ padding: "4px 12px", minWidth: "120px" }}
+          onClick={onCopy}
+        >
+          {copied ? (
+            <>
+              <span>Copied Link</span>
+              <svg
+                className="w-3.5 h-3.5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </>
+          ) : (
+            <>
+              <span>Copy Link</span>
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </>
+          )}
+        </button>
+
+        {hasProof ? undefined : (
+          <button
+            className="bg-transparent border border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700 rounded-lg transition-all font-medium text-xs"
+            style={{ padding: "4px 12px", minWidth: "120px" }}
+            onClick={onLaunch}
+          >
+            <span>Launch Again</span>
+          </button>
         )}
+      </div>
+
+      <button
+        className="flex items-center justify-center gap-1.5 bg-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-200/60 rounded-lg transition-all font-medium text-xs px-3 py-1.5"
+        onClick={() => setShowOptions(true)}
+      >
+        <span>View Options</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="16px"
+          viewBox="0 -960 960 960"
+          width="16px"
+          fill="currentColor"
+        >
+          <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z" />
+        </svg>
       </button>
 
-      {hasProof ? undefined : (
-        <button
-          className="bg-transparent border border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700 rounded-lg transition-all font-medium text-xs"
-          style={{ padding: "4px 12px", minWidth: "120px" }}
-          onClick={onLaunch}
-        >
-          <span>Launch Again</span>
-        </button>
-      )}
+      <Dialog
+        isOpen={showOptions}
+        onClose={() => setShowOptions(false)}
+        title="Proof Request Options"
+        copy={{
+          label: "JSON",
+          getDataForCopy: getProofRequestJson,
+        }}
+      >
+        <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono text-start">
+          {getProofRequestJson()}
+        </pre>
+      </Dialog>
     </div>
   );
 };
