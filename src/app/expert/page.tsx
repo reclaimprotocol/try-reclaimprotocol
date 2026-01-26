@@ -197,6 +197,23 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">
+          Error Callback URL
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-callback" />
+        </div>
+        <div className="setting-desc">URL to receive error callbacks.</div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="https://example.com/error-callback"
+          value={settings.errorCallbackUrl}
+          onChange={(e) => updateSettings({ errorCallbackUrl: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">
           Context
           <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-context" />
         </div>
@@ -220,6 +237,34 @@ function Page() {
           placeholder="https://example.com/success"
           value={settings.redirectUrl}
           onChange={(e) => updateSettings({ redirectUrl: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Error redirect URL</div>
+        <div className="setting-desc">URL to redirect after verification is aborted by provider or cancelled by user.</div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="https://example.com/failure"
+          value={settings.errorRedirectUrl}
+          onChange={(e) => updateSettings({ errorRedirectUrl: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Preferred Locale</div>
+        <div className="setting-desc">Preferred locale for the verification UI shown to users.</div>
+        <input
+          type="text"
+          className="input-tile"
+          placeholder="en"
+          value={settings.preferredLocale}
+          onChange={(e) => updateSettings({ preferredLocale: e.target.value })}
         />
       </div>
 

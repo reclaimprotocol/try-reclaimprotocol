@@ -140,6 +140,7 @@ export const YourBackendUsingReclaim = {
             ? expertSettings.useBrowserExtension
             : undefined,
         canAutoSubmit: expertSettings.canAutoSubmit ?? true,
+        preferredLocale: expertSettings.preferredLocale,
         metadata: expertSettings.metadata
           ? JSON.parse(expertSettings.metadata)
           : undefined,
@@ -152,6 +153,14 @@ export const YourBackendUsingReclaim = {
 
     if (expertSettings.redirectUrl) {
       proofRequest.setRedirectUrl(expertSettings.redirectUrl);
+    }
+
+    if (expertSettings.errorCallbackUrl) {
+      proofRequest.setErrorCallbackUrl(expertSettings.errorCallbackUrl);
+    }
+
+    if (expertSettings.errorRedirectUrl) {
+      proofRequest.setErrorRedirectUrl(expertSettings.errorRedirectUrl);
     }
 
     if (expertSettings.context) {

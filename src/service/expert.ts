@@ -5,6 +5,14 @@ export interface ExpertSettings {
   parameters: string; // JSON string
   context: string; // JSON string
   redirectUrl: string;
+  /**
+   * @since 4.8.0
+   */
+  errorCallbackUrl: string;
+  /**
+   * @since 4.8.0
+   */
+  errorRedirectUrl: string;
   providerVersion: string;
   appId: string;
   appSecret: string;
@@ -23,4 +31,8 @@ export interface ExpertSettings {
    * @since 4.7.0
    */
   metadata?: string; // JSON string
+  /**
+   * @since 4.9.0
+   */
+  preferredLocale?: string;
 }
