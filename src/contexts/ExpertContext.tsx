@@ -21,6 +21,8 @@ export const defaultSettings: ExpertSettings = {
   parameters: "",
   context: "",
   redirectUrl: "",
+  errorCallbackUrl: "",
+  errorRedirectUrl: "",
   providerVersion: "",
   appId: "",
   appSecret: "",
@@ -33,6 +35,7 @@ export const defaultSettings: ExpertSettings = {
   extensionID: "",
   envUrl: null,
   useBrowserExtension: true,
+  preferredLocale: "",
 };
 
 const ExpertContext = createContext<ExpertContextType | undefined>(undefined);
