@@ -155,12 +155,12 @@ export const YourBackendUsingReclaim = {
       proofRequest.setRedirectUrl(expertSettings.redirectUrl);
     }
 
-    if (expertSettings.errorCallbackUrl) {
-      proofRequest.setErrorCallbackUrl(expertSettings.errorCallbackUrl);
+    if (expertSettings.cancelCallbackUrl) {
+      proofRequest.setCancelCallbackUrl(expertSettings.cancelCallbackUrl);
     }
 
-    if (expertSettings.errorRedirectUrl) {
-      proofRequest.setErrorRedirectUrl(expertSettings.errorRedirectUrl);
+    if (expertSettings.cancelRedirectUrl) {
+      proofRequest.setCancelRedirectUrl(expertSettings.cancelRedirectUrl);
     }
 
     if (expertSettings.context) {

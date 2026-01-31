@@ -6,13 +6,13 @@ export interface ExpertSettings {
   context: string; // JSON string
   redirectUrl: string;
   /**
-   * @since 4.8.0
+   * @since 4.10.0
    */
-  errorCallbackUrl: string;
+  cancelCallbackUrl: string;
   /**
-   * @since 4.8.0
+   * @since 4.10.0
    */
-  errorRedirectUrl: string;
+  cancelRedirectUrl: string;
   providerVersion: string;
   appId: string;
   appSecret: string;
