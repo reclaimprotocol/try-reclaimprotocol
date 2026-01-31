@@ -197,16 +197,16 @@ function Page() {
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
         <div className="setting-title">
-          Error Callback URL
+          Cancel Callback URL
           <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-callback" />
         </div>
-        <div className="setting-desc">URL to receive error callbacks.</div>
+        <div className="setting-desc">URL to receive cancel callbacks. Happens after verification is aborted by provider or cancelled by user.</div>
         <input
           type="text"
           className="input-tile"
-          placeholder="https://example.com/error-callback"
-          value={settings.errorCallbackUrl}
-          onChange={(e) => updateSettings({ errorCallbackUrl: e.target.value })}
+          placeholder="https://example.com/cancel-callback"
+          value={settings.cancelCallbackUrl}
+          onChange={(e) => updateSettings({ cancelCallbackUrl: e.target.value })}
         />
       </div>
 
@@ -243,14 +243,14 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Error redirect URL</div>
+        <div className="setting-title">Cancel Redirect URL</div>
         <div className="setting-desc">URL to redirect after verification is aborted by provider or cancelled by user.</div>
         <input
           type="text"
           className="input-tile"
           placeholder="https://example.com/failure"
-          value={settings.errorRedirectUrl}
-          onChange={(e) => updateSettings({ errorRedirectUrl: e.target.value })}
+          value={settings.cancelRedirectUrl}
+          onChange={(e) => updateSettings({ cancelRedirectUrl: e.target.value })}
         />
       </div>
 
