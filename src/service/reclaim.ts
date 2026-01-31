@@ -53,6 +53,12 @@ export const YourBackendUsingReclaim = {
    * @param proof
    */
   processProof: async (proof: string | Proof | Proof[]): Promise<Proof[]> => {
+    if (typeof proof === 'string' || (Array.isArray(proof) && proof.length == 0)) {
+      // Proof submitted to callback. If this string or empty array, then proof was submitted to callback, not reclaim.
+      // If its string, then it will just be a success message
+      return [];
+    }
+
     const proofs = YourBackendUsingReclaim.getProofsAsArray(proof);
 
     // As best practice, you MUST verify proof using `verifyProof` from `import { verifyProof } from "@reclaimprotocol/js-sdk"`
