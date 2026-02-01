@@ -181,7 +181,7 @@ function Page() {
       >
         <div className="setting-title">
           Callback URL
-          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-callback" />
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#success-callback" />
         </div>
         <div className="setting-desc">URL to receive proof callbacks.</div>
         <input
@@ -198,7 +198,7 @@ function Page() {
       >
         <div className="setting-title">
           Cancel Callback URL
-          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-callback" />
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#cancel-callback" />
         </div>
         <div className="setting-desc">URL to receive cancel callbacks. Happens after verification is aborted by provider or cancelled by user.</div>
         <input
@@ -229,7 +229,7 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Redirect URL</div>
+        <div className="setting-title">Redirect URL<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#success-redirect-url" /></div>
         <div className="setting-desc">URL to redirect after verification.</div>
         <input
           type="text"
@@ -243,7 +243,7 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Cancel Redirect URL</div>
+        <div className="setting-title">Cancel Redirect URL<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#cancel-redirect-url" /></div>
         <div className="setting-desc">URL to redirect after verification is aborted by provider or cancelled by user.</div>
         <input
           type="text"
@@ -257,7 +257,7 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Preferred Locale</div>
+        <div className="setting-title">Preferred Locale<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#set-preferred-locale-for-verification-client" /></div>
         <div className="setting-desc">Preferred locale for the verification UI shown to users.</div>
         <input
           type="text"
@@ -273,7 +273,7 @@ function Page() {
       >
         <div className="setting-title">
           Share Page URL
-          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#forcing-remote-browser-use" />
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#using-the-in-browser-sdk" />
         </div>
         <div className="setting-desc">
           URL to the page which decides where verification should happen.
@@ -362,7 +362,7 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
-        <div className="setting-title">Metadata</div>
+        <div className="setting-title">Metadata<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#add-additional-metadata-for-verification-client" /></div>
         <div className="setting-desc">
           Additional metadata to pass as JSON string to the verification client.
           This can be used to customize the client experience, such as
