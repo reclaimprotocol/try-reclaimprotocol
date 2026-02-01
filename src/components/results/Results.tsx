@@ -75,7 +75,7 @@ export default function ResultsView({
   return (
     <div className={className}>
       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mt-6 mb-3 text-center">
-        What was Shared
+        {proof && proof.length == 0 ? `Proof was sent to callback` : `What was Shared`}
       </p>
 
       <SharedDataDisplay
@@ -121,7 +121,11 @@ const ProofDetailsDialog = ({ proof }: { proof: Proof[] }) => {
       </div>
     );
 
-  const proofText = JSON.stringify(proof, null, 2);
+  let proofText = JSON.stringify(proof, null, 2);
+
+  if (proof.length == 0) {
+    proofText = "Proof was sent to callback";
+  }
 
   return (
     <Dialog
