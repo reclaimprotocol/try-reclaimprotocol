@@ -243,6 +243,47 @@ function Page() {
       <div
         className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
       >
+        <div className="setting-title">
+          Redirect Method
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#success-redirect-url" />
+        </div>
+        <div className="setting-desc">
+          The method used to redirect after verification. Supported only on In-Browser SDK.
+        </div>
+        <select
+          className="input-tile"
+          value={settings.redirectRequestMethod}
+          disabled={!settings.isExpertModeEnabled}
+          onChange={(e) =>
+            updateSettings({
+              redirectRequestMethod: e.target.value as "GET" | "POST",
+            })
+          }
+        >
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+        </select>
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Redirect Request Body<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#success-redirect-url" /></div>
+        <div className="setting-desc">
+          The request body sent on redirect after verification.
+          This must be an array of objects with string name and value.
+        </div>
+        <textarea
+          className="input-tile"
+          placeholder='[{"name": "string", "value": "string"}]'
+          value={settings.redirectRequestBody}
+          onChange={(e) => updateSettings({ redirectRequestBody: e.target.value })}
+        />
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
         <div className="setting-title">Cancel Redirect URL<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#cancel-redirect-url" /></div>
         <div className="setting-desc">URL to redirect after verification is aborted by provider or cancelled by user.</div>
         <input
@@ -251,6 +292,46 @@ function Page() {
           placeholder="https://example.com/failure"
           value={settings.cancelRedirectUrl}
           onChange={(e) => updateSettings({ cancelRedirectUrl: e.target.value })}
+        />
+      </div>
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">
+          Cancel Redirect Method
+          <DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#cancel-redirect-url" />
+        </div>
+        <div className="setting-desc">
+          The method used to redirect after verification. Supported only on In-Browser SDK.
+        </div>
+        <select
+          className="input-tile"
+          value={settings.cancelRedirectRequestMethod}
+          disabled={!settings.isExpertModeEnabled}
+          onChange={(e) =>
+            updateSettings({
+              cancelRedirectRequestMethod: e.target.value as "GET" | "POST",
+            })
+          }
+        >
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+        </select>
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Cancel Redirect Request Body<DocLink href="https://docs.reclaimprotocol.org/js-sdk/preparing-request#cancel-redirect-url" /></div>
+        <div className="setting-desc">
+          The request body sent on redirect after verification.
+          This must be an array of objects with string name and value.
+        </div>
+        <textarea
+          className="input-tile"
+          placeholder='[{"name": "string", "value": "string"}]'
+          value={settings.cancelRedirectRequestBody}
+          onChange={(e) => updateSettings({ cancelRedirectRequestBody: e.target.value })}
         />
       </div>
 

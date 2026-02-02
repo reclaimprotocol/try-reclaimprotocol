@@ -158,7 +158,12 @@ export const YourBackendUsingReclaim = {
     }
 
     if (expertSettings.redirectUrl) {
-      proofRequest.setRedirectUrl(expertSettings.redirectUrl);
+      if (!expertSettings.redirectRequestBody || expertSettings.redirectRequestMethod == 'GET') {
+        proofRequest.setRedirectUrl(expertSettings.redirectUrl);
+      } else {
+        const requestBody = JSON.parse(expertSettings.redirectRequestBody || '[]');
+        proofRequest.setRedirectUrl(expertSettings.redirectUrl, expertSettings.redirectRequestMethod, requestBody);
+      }
     }
 
     if (expertSettings.cancelCallbackUrl) {
@@ -166,7 +171,12 @@ export const YourBackendUsingReclaim = {
     }
 
     if (expertSettings.cancelRedirectUrl) {
-      proofRequest.setCancelRedirectUrl(expertSettings.cancelRedirectUrl);
+      if (!expertSettings.cancelRedirectRequestBody || expertSettings.cancelRedirectRequestMethod == 'GET') {
+        proofRequest.setCancelRedirectUrl(expertSettings.cancelRedirectUrl);
+      } else {
+        const requestBody = JSON.parse(expertSettings.cancelRedirectRequestBody || '[]');
+        proofRequest.setCancelRedirectUrl(expertSettings.cancelRedirectUrl, expertSettings.cancelRedirectRequestMethod, requestBody);
+      }
     }
 
     if (expertSettings.context) {
