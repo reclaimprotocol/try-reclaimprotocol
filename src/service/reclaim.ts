@@ -158,7 +158,7 @@ export const YourBackendUsingReclaim = {
     }
 
     if (expertSettings.redirectUrl) {
-      if (!expertSettings.redirectRequestBody || expertSettings.redirectRequestMethod == 'GET') {
+      if (!expertSettings.redirectRequestBody && expertSettings.redirectRequestMethod == 'GET') {
         proofRequest.setRedirectUrl(expertSettings.redirectUrl);
       } else {
         const requestBody = JSON.parse(expertSettings.redirectRequestBody || '[]');
@@ -171,7 +171,7 @@ export const YourBackendUsingReclaim = {
     }
 
     if (expertSettings.cancelRedirectUrl) {
-      if (!expertSettings.cancelRedirectRequestBody || expertSettings.cancelRedirectRequestMethod == 'GET') {
+      if (!expertSettings.cancelRedirectRequestBody && expertSettings.cancelRedirectRequestMethod == 'GET') {
         proofRequest.setCancelRedirectUrl(expertSettings.cancelRedirectUrl);
       } else {
         const requestBody = JSON.parse(expertSettings.cancelRedirectRequestBody || '[]');
