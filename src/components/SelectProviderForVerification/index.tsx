@@ -36,6 +36,17 @@ export default function SelectProviderForVerification() {
   );
 
   useEffect(() => {
+    const savedProviderInfo = sessionStorage.getItem("savedProviderInfo");
+    if (savedProviderInfo) {
+      setProviders(JSON.parse(savedProviderInfo));
+    }
+    const savedProviderId = sessionStorage.getItem("providerId");
+    if (savedProviderId) {
+      setQuery(savedProviderId);
+    }
+  }, []);
+
+  useEffect(() => {
     const abortController = new AbortController();
 
     const fetchProviders = async () => {
@@ -73,9 +84,13 @@ export default function SelectProviderForVerification() {
     setQuery(provider.httpProviderId);
     setSelectedProvider(provider);
     setIsOpen(false);
+    sessionStorage.setItem("providerId", provider.httpProviderId);
+    sessionStorage.setItem("savedProviderInfo", JSON.stringify(provider));
   };
 
   const handleClear = () => {
+    sessionStorage.removeItem("providerId");
+    sessionStorage.removeItem("savedProviderInfo");
     setQuery("");
     setSelectedProvider(null);
     setIsOpen(true);
@@ -136,7 +151,15 @@ export default function SelectProviderForVerification() {
               className="input-field"
               value={query}
               onChange={(e) => {
-                setQuery(e.target.value);
+                const val = e.target.value;
+                setQuery(val);
+                if (typeof window !== "undefined") {
+                  if (val) {
+                    sessionStorage.setItem("providerId", val);
+                  } else {
+                    sessionStorage.removeItem("providerId");
+                  }
+                }
                 if (selectedProvider) setSelectedProvider(null);
               }}
               onFocus={() => setIsOpen(true)}
