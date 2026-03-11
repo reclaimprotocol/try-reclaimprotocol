@@ -6,6 +6,14 @@ export interface ExpertSettings {
   context: string; // JSON string
   redirectUrl: string;
   /**
+   * @since 4.11.0
+   */
+  redirectRequestMethod: "GET" | "POST";
+  /**
+   * @since 4.11.0
+   */
+  redirectRequestBody: string;
+  /**
    * @since 4.10.0
    */
   cancelCallbackUrl: string;
@@ -13,6 +21,14 @@ export interface ExpertSettings {
    * @since 4.10.0
    */
   cancelRedirectUrl: string;
+  /**
+   * @since 4.11.0
+   */
+  cancelRedirectRequestMethod: "GET" | "POST";
+  /**
+   * @since 4.11.0
+   */
+  cancelRedirectRequestBody: string;
   providerVersion: string;
   appId: string;
   appSecret: string;
