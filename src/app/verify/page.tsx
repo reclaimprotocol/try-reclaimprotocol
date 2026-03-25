@@ -79,8 +79,18 @@ function Page() {
       if (proof) return;
 
       switch (launchMethod) {
-        case "js-sdk":
-          proofRequest.triggerReclaimFlow().catch((error) => {
+        case "js-sdk.portal":
+          proofRequest.triggerReclaimFlow({
+            verificationMode: 'portal',
+          }).catch((error) => {
+            console.error("Failed to trigger reclaim flow", error);
+            setStatus("error");
+          });
+          break;
+        case "js-sdk.app":
+          proofRequest.triggerReclaimFlow({
+            verificationMode: 'app',
+          }).catch((error) => {
             console.error("Failed to trigger reclaim flow", error);
             setStatus("error");
           });
@@ -108,7 +118,7 @@ function Page() {
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
       if (proof) return;
 
-      if (launchMethod == "js-sdk" || launchMethod == "windowopen") {
+      if (launchMethod == "js-sdk.portal" || launchMethod == "js-sdk.app" || launchMethod == "windowopen") {
         launchReclaimFlow(proofRequest);
       }
 

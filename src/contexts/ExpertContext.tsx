@@ -16,7 +16,7 @@ interface ExpertContextType {
 
 export const defaultSettings: ExpertSettings = {
   isExpertModeEnabled: false,
-  launchMethod: "js-sdk",
+  launchMethod: "js-sdk.portal",
   callbackUrl: "",
   parameters: "",
   context: "",

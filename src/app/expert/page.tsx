@@ -88,12 +88,13 @@ function Page() {
           disabled={!settings.isExpertModeEnabled}
           onChange={(e) =>
             updateSettings({
-              launchMethod: e.target.value as "none" | "js-sdk" | "windowopen",
+              launchMethod: e.target.value as "none" | "js-sdk.portal" | "js-sdk.app" | "windowopen",
             })
           }
         >
           <option value="none">None</option>
-          <option value="js-sdk">JS SDK</option>
+          <option value="js-sdk.portal">JS SDK Portal</option>
+          <option value="js-sdk.app">JS SDK App</option>
           <option value="windowopen">Window Open</option>
         </select>
       </div>
