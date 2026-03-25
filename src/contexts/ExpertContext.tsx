@@ -34,7 +34,7 @@ export const defaultSettings: ExpertSettings = {
   useDeferredDeepLinksFlow: true,
   canAutoSubmit: true,
   metadata: "",
-  useAppClip: true,
+  useAppClip: false,
   customAppClipUrl: "",
   extensionID: "",
   envUrl: null,

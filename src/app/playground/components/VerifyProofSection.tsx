@@ -187,9 +187,9 @@ function VerificationActions({
                     }
                 }}
             >
-                <option value="none">No Validation</option>
-                <option value="provider">Provider Validation</option>
-                <option value="hash">Hash Validation</option>
+                <option id="no-validation" value="none">No Validation</option>
+                <option id="provider-validation" value="provider">Provider Validation</option>
+                <option id="hash-validation" value="hash">Hash Validation</option>
             </select>
         </div>
     );
