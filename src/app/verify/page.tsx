@@ -137,8 +137,19 @@ function Page() {
             showSnackbar(`Verifying result`);
 
             try {
+              if (typeof proof === 'string' || (Array.isArray(proof) && proof.length == 0)) {
+                // Proof submitted to callback. If this string or empty array, then proof was submitted to callback, not reclaim.
+                // If its string, then it will just be a success message
+                showSnackbar(`Verification data sent to callback`);
+                setProof([]);
+
+                setStatus("completed");
+                setStatusLiveBackground("success");
+                return;
+              }
+
               const trustableProof =
-                await YourBackendUsingReclaim.processProof(proof);
+                await YourBackendUsingReclaim.processProof(proof, proofRequest.getProviderVersion());
               showSnackbar(`Verification completed successfully`);
               setProof(trustableProof);
 
