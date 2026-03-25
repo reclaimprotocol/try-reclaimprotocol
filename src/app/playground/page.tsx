@@ -43,8 +43,8 @@ function Page() {
               window.reclaimStrings.evaluateXPath(path, data, true)
             }
           />
-          <ClaimRequestSection />
           <VerifyProofSection />
+          <ClaimRequestSection />
         </div>
       </div>
     </>
