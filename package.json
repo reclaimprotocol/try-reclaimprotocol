@@ -12,7 +12,7 @@
     "format": "npx prettier . --write"
   },
   "dependencies": {
-    "@reclaimprotocol/js-sdk": "^4.15.0",
+    "@reclaimprotocol/js-sdk": "^5.0.0-dev.4",
     "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

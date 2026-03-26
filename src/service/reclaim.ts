@@ -3,6 +3,8 @@ import {
   verifyProof,
   type Proof,
   isMobileDevice,
+  type ProviderVersionInfo,
+  type VerifyProofResult,
 } from "@reclaimprotocol/js-sdk";
 import type { ExpertSettings } from "./expert";
 
@@ -41,10 +43,10 @@ export const YourBackendUsingReclaim = {
     }
   },
 
-  validateProof: async (proofs: Proof[]): Promise<boolean> => {
-    // Validate proof to check if this is what you expected including
-    // request validation and business requirment checks
-    return proofs.length > 0;
+  validateProof: async (result: VerifyProofResult): Promise<boolean> => {
+    // Validate proof to check if this is what you expected
+    // data validation and business requirment checks
+    return result.data.length > 0;
   },
 
   /**
@@ -52,37 +54,30 @@ export const YourBackendUsingReclaim = {
    *
    * @param proof
    */
-  processProof: async (proof: string | Proof | Proof[]): Promise<Proof[]> => {
-    if (typeof proof === 'string' || (Array.isArray(proof) && proof.length == 0)) {
-      // Proof submitted to callback. If this string or empty array, then proof was submitted to callback, not reclaim.
-      // If its string, then it will just be a success message
-      return [];
-    }
-
+  processProof: async (proof: string | Proof | Proof[], providerVersionInfo: ProviderVersionInfo): Promise<Proof[]> => {
     const proofs = YourBackendUsingReclaim.getProofsAsArray(proof);
 
     // As best practice, you MUST verify proof using `verifyProof` from `import { verifyProof } from "@reclaimprotocol/js-sdk"`
     // This should happen on your backend.
     //
     // This can also throw when proof verification fails.
-    const isProofVerified = await verifyProof(proofs);
+    // 
+    // The verifyProof also does validation by checking request url,
+    // method, etc.
+    const verificationResult = await verifyProof(proofs, providerVersionInfo);
 
-    if (!isProofVerified) {
+    if (!verificationResult.isVerified) {
       // Do not use proof which cannot be verified.
       // This can happen when there were transport problems, data was incorrect,
       // some service was down, or someone faked the proof.
       throw new Error("Proof could not be verified");
     }
 
-    // As best practice, you MUST validate proofs as per expectations and business requirements.
-    // This should happen on your backend.
+    // As best practice, you MUST validate proofs all proven fields (aka extracted params) as per 
+    // expectations and business requirements. This should happen on your backend.
     //
-    // This must be done to make sure that
-    // this is the proof you expected.
-    //
-    // As an example, validation can be done by checking request url, headers,
-    // method, and all proven fields (aka extracted params), etc.
-    const isProofValid = await YourBackendUsingReclaim.validateProof(proofs);
+    // This must be done to make sure that this is the proof you expected.
+    const isProofValid = await YourBackendUsingReclaim.validateProof(verificationResult);
 
     if (!isProofValid) {
       // Do not use proof that failed your validation.
