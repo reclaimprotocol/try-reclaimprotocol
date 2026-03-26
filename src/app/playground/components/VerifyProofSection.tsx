@@ -1,12 +1,7 @@
-import { generateSpecsFromRequestSpecTemplate, getProviderHashRequirementsFromSpec, takeTemplateParametersFromProofs, verifyProof, type Proof, type ReclaimProviderConfig, type ValidationConfigWithHash, type ValidationConfigWithProviderInformation, type VerificationConfig } from "@reclaimprotocol/js-sdk";
+import { getProviderHashRequirementsFromSpec, getProviderHashRequirementSpecFromProviderConfig, verifyProof, type Proof, type ReclaimProviderConfigWithRequestSpec, type ValidationConfigWithHash, type ValidationConfigWithProviderInformation, type VerificationConfig } from "@reclaimprotocol/js-sdk";
 import { useState } from "react";
 
-type ReclaimProviderConfigSpec = {
-    requestData: ReclaimProviderConfig['requestData'];
-    allowedInjectedRequestData: ReclaimProviderConfig['allowedInjectedRequestData'];
-}
-
-type ValidationMethodType = undefined | { type: 'provider', args: ValidationConfigWithProviderInformation } | { type: 'hash', args: ValidationConfigWithHash } | { type: 'spec', args: ReclaimProviderConfigSpec };
+type ValidationMethodType = undefined | { type: 'provider', args: ValidationConfigWithProviderInformation } | { type: 'hash', args: ValidationConfigWithHash } | { type: 'spec', args: ReclaimProviderConfigWithRequestSpec };
 
 export function VerifyProofSection() {
     const [proofResult, setProofResult] = useState("");
@@ -35,18 +30,10 @@ export function VerifyProofSection() {
                         const providerConfig = validationMethod.args;
 
                         // Build hash requirements from request spec
-                        const hashRequirementsFromSpec = getProviderHashRequirementsFromSpec({
-                            requests: [
-                                // These requests are typically used by request interceptors
-                                ...(providerConfig?.requestData ?? []),
-                                // These requests are created by JS on runtime and we do not know the exact request in advance.
-                                // Hence we declare permitted template for requests they can make and now we generate request spec from it based on proof
-                                // to dyanmically make hashes
-                                ...generateSpecsFromRequestSpecTemplate(providerConfig?.allowedInjectedRequestData ?? [], takeTemplateParametersFromProofs(proofs))
-                            ],
-                        });
+                        const hashRequirementsSpec = getProviderHashRequirementSpecFromProviderConfig(providerConfig);
+                        const hashRequirements = getProviderHashRequirementsFromSpec(hashRequirementsSpec);
 
-                        return hashRequirementsFromSpec
+                        return hashRequirements
                     } catch (e) {
                         return { hashes: [] }
                     }

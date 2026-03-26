@@ -1,10 +1,10 @@
 import "./index.css";
 import { EvaluatorSection } from "./components/EvaluatorSection";
-import { ClaimRequestSection } from "./components/ClaimRequestSection";
 import { useEffect } from "react";
 import { installReclaimStrings } from "../../utils/reclaim_strings";
 import { showSnackbar } from "../../components/Snackbar";
 import { VerifyProofSection } from "./components/VerifyProofSection";
+import { CompareProofsSection } from "./components/CompareProofs";
 
 // Playground page for testing claim evaluation
 function Page() {
@@ -44,7 +44,8 @@ function Page() {
             }
           />
           <VerifyProofSection />
-          <ClaimRequestSection />
+          {/* <ClaimRequestSection /> */}
+          <CompareProofsSection />
         </div>
       </div>
     </>
