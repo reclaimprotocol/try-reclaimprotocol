@@ -1,7 +1,12 @@
-import { verifyProof, type Proof, type ValidationConfigWithHash, type ValidationConfigWithProviderInformation } from "@reclaimprotocol/js-sdk";
+import { generateSpecsFromRequestSpecTemplate, getProviderHashRequirementsFromSpec, takeTemplateParametersFromProofs, verifyProof, type Proof, type ReclaimProviderConfig, type ValidationConfigWithHash, type ValidationConfigWithProviderInformation, type VerificationConfig } from "@reclaimprotocol/js-sdk";
 import { useState } from "react";
 
-type ValidationMethodType = undefined | { type: 'provider', args: ValidationConfigWithProviderInformation } | { type: 'hash', args: ValidationConfigWithHash };
+type ReclaimProviderConfigSpec = {
+    requestData: ReclaimProviderConfig['requestData'];
+    allowedInjectedRequestData: ReclaimProviderConfig['allowedInjectedRequestData'];
+}
+
+type ValidationMethodType = undefined | { type: 'provider', args: ValidationConfigWithProviderInformation } | { type: 'hash', args: ValidationConfigWithHash } | { type: 'spec', args: ReclaimProviderConfigSpec };
 
 export function VerifyProofSection() {
     const [proofResult, setProofResult] = useState("");
@@ -17,38 +22,47 @@ export function VerifyProofSection() {
         setEvaluationResult("");
         setEvaluationError("");
         try {
-            // Doing verification without validation and TEE verification
-            // to debug the reason of verification failure. Verify Proof resulting false doesn't share reason of failure.
-            const verificationResult = await verifyProof(JSON.parse(proofResult) as Proof, { dangerouslyDisableContentValidation: true }, false);
-            if (!verificationResult.isVerified) {
-                setEvaluationError('Proof verification failed');
-                return
-            }
-            switch (validationMethod?.type) {
-                case 'hash':
-                    const verificationAndValidationByHashResult = await verifyProof(JSON.parse(proofResult) as Proof, validationMethod.args, false);
-                    if (!verificationAndValidationByHashResult.isVerified) {
-                        setEvaluationError('Proof validation by hash failed');
+            const proofOrProofs = JSON.parse(proofResult) as Proof | Proof[];
+            const proofs: Proof[] = Array.isArray(proofOrProofs) ? proofOrProofs : [proofOrProofs]
+
+            const getVerificationOptions = (): VerificationConfig => {
+                if (!validationMethod) {
+                    return { dangerouslyDisableContentValidation: true }
+                }
+                if (validationMethod.type === 'spec') {
+                    // For advanced users who don't want to depend on reclaim for getting hashes
+                    try {
+                        const providerConfig = validationMethod.args;
+
+                        // Build hash requirements from request spec
+                        const hashRequirementsFromSpec = getProviderHashRequirementsFromSpec({
+                            requests: [
+                                // These requests are typically used by request interceptors
+                                ...(providerConfig?.requestData ?? []),
+                                // These requests are created by JS on runtime and we do not know the exact request in advance.
+                                // Hence we declare permitted template for requests they can make and now we generate request spec from it based on proof
+                                // to dyanmically make hashes
+                                ...generateSpecsFromRequestSpecTemplate(providerConfig?.allowedInjectedRequestData ?? [], takeTemplateParametersFromProofs(proofs))
+                            ],
+                        });
+
+                        return hashRequirementsFromSpec
+                    } catch (e) {
+                        return { hashes: [] }
                     }
-                    break;
-                case 'provider':
-                    const verificationAndValidationByProviderResult = await verifyProof(JSON.parse(proofResult) as Proof, validationMethod.args, false);
-                    if (!verificationAndValidationByProviderResult.isVerified) {
-                        setEvaluationError('Proof validation by provider failed');
-                    }
-                    break;
-                default:
-                    // no validation
-                    break;
+                }
+
+                // automatic from provider id and version or by directly providing hashes
+                return validationMethod.args
             }
 
-            if (isTEEVerificationRequired) {
-                const verificationAndTeeResult = await verifyProof(JSON.parse(proofResult) as Proof, { dangerouslyDisableContentValidation: true }, true);
-                if (!verificationAndTeeResult.isTeeVerified) {
-                    // In this case, `.isVerified` will also be false.
-                    setEvaluationError('TEE verification failed');
-                    return
-                }
+            const verificationResult = await verifyProof(
+                proofs,
+                { ...getVerificationOptions(), verifyTEE: isTEEVerificationRequired }
+            );
+
+            if (!verificationResult.isVerified) {
+                throw verificationResult.error;
             }
 
             setEvaluationResult('Proof verification successful');
@@ -184,12 +198,63 @@ function VerificationActions({
                         };
                         setValidationMethod({ type: "hash", args: defaultHashArgs });
                         setValidationMethodString(JSON.stringify(defaultHashArgs, null, 2));
+                    } else if (val === 'spec') {
+                        const defaultSpecArgs: Extract<ValidationMethodType, { type: 'spec' }>['args'] = {
+                            requestData: [
+                                {
+                                    "url": "https://example.org/",
+                                    "urlType": "TEMPLATE",
+                                    "method": "GET",
+                                    "responseMatches": [
+                                        {
+                                            "value": "{{pageTitle}}",
+                                            "type": "contains",
+                                            "invert": false,
+                                            "isOptional": false
+                                        },
+                                        {
+                                            "value": "<a href={{ianaLinkUrl}}>Learn more</a>",
+                                            "type": "contains",
+                                            "invert": false,
+                                            "isOptional": false
+                                        }
+                                    ],
+                                    "responseRedactions": [
+                                        {
+                                            "xPath": "//title/text()",
+                                            "jsonPath": "",
+                                            "regex": "(.*)",
+                                            "hash": null as any
+                                        },
+                                        {
+                                            "xPath": "/html/body/div[1]/p[2]/a",
+                                            "jsonPath": "",
+                                            "regex": "<a href=(.*)>Learn more</a>",
+                                            "hash": undefined
+                                        }
+                                    ],
+                                    "bodySniff": {
+                                        "enabled": false,
+                                        "template": ""
+                                    },
+                                    "templateParams": []
+                                },
+                            ],
+                            allowedInjectedRequestData: [
+                                /**
+                                 * Similar to above but supports templateParams
+                                 */
+                            ]
+                        };
+                        setValidationMethod({ type: "spec", args: defaultSpecArgs });
+                        setValidationMethodString(JSON.stringify(defaultSpecArgs, null, 2));
                     }
                 }}
             >
                 <option id="no-validation" value="none">No Validation</option>
                 <option id="provider-validation" value="provider">Provider Validation</option>
                 <option id="hash-validation" value="hash">Hash Validation</option>
+                <option id="spec-validation" value="spec">Spec Validation</option>
             </select>
         </div>
     );

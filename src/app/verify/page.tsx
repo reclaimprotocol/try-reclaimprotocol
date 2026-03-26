@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 import { YourBackendUsingReclaim } from "../../service/reclaim";
-import { ReclaimProofRequest, type Proof } from "@reclaimprotocol/js-sdk";
+import { ReclaimProofRequest, type FlowHandle, type Proof } from "@reclaimprotocol/js-sdk";
 import { showSnackbar } from "../../components/Snackbar";
 import { getErrorMessage } from "../../utils/error_message";
 import ResultsView from "../../components/results/Results";
@@ -30,6 +30,7 @@ function Page() {
   const [proof, setProof] = useState<Proof[] | null>(null);
   const [applicationId, setApplicationId] = useState<string>("");
   const [providerId, setProviderId] = useState<string>("");
+  const [flowHandle, setFlowHandle] = useState<FlowHandle | undefined>();
 
   // Ignore this section of the code, it's just for demo purposes.
   // ==== IGNORE START ====
@@ -82,7 +83,7 @@ function Page() {
         case "js-sdk.portal":
           proofRequest.triggerReclaimFlow({
             verificationMode: 'portal',
-          }).catch((error) => {
+          }).then(setFlowHandle).catch((error) => {
             console.error("Failed to trigger reclaim flow", error);
             setStatus("error");
           });
@@ -90,7 +91,7 @@ function Page() {
         case "js-sdk.app":
           proofRequest.triggerReclaimFlow({
             verificationMode: 'app',
-          }).catch((error) => {
+          }).then(setFlowHandle).catch((error) => {
             console.error("Failed to trigger reclaim flow", error);
             setStatus("error");
           });
@@ -114,6 +115,14 @@ function Page() {
     [launchMethod, proof],
   );
 
+  const closeFlowHandle = () => {
+    try {
+      flowHandle?.close();
+    } catch (error) {
+      console.error('Failed to close flow with handle', error);
+    }
+  }
+
   const startVerificationJourney = useCallback(
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
       if (proof) return;
@@ -132,6 +141,7 @@ function Page() {
           // As best practise, you MUST verify it again using `verifyProof` from `import { verifyProof } from "@reclaimprotocol/js-sdk"`
           onSuccess: async (proof) => {
             console.info({ proof });
+            closeFlowHandle();
 
             if (!proof) {
               // likely a type issue, shouldn't happen
@@ -184,6 +194,7 @@ function Page() {
             showSnackbar(
               `Something went wrong because ${getErrorMessage(error)}`,
             );
+            closeFlowHandle();
           },
         })
         .catch((error) => {
