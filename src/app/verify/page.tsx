@@ -79,6 +79,8 @@ function Page() {
     async (proofRequest: ReclaimProofRequest): Promise<void> => {
       if (proof) return;
 
+      console.info({ launchMethod });
+
       switch (launchMethod) {
         case "js-sdk.portal":
           proofRequest.triggerReclaimFlow({
