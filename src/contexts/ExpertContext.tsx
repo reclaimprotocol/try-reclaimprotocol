@@ -6,6 +6,7 @@ import {
   type JSX,
 } from "react";
 import type { ExpertSettings } from "../service/expert";
+import { STORAGE_KEYS } from "../constants";
 
 interface ExpertContextType {
   settings: ExpertSettings;
@@ -16,6 +17,7 @@ interface ExpertContextType {
 
 export const defaultSettings: ExpertSettings = {
   isExpertModeEnabled: false,
+  environment: "production",
   launchMethod: "js-sdk.portal",
   callbackUrl: "",
   parameters: "",
@@ -72,10 +74,12 @@ export const ExpertContextProvider = ({
 
   // Load settings from localStorage on mount
   useEffect(() => {
-    const storedSettings = localStorage.getItem("reclaim_expert_settings");
+    const storedSettings = localStorage.getItem(STORAGE_KEYS.expertSettings);
     if (storedSettings) {
       try {
-        setSettings(JSON.parse(storedSettings));
+        // Merge over defaults so fields added after this blob was saved
+        // (e.g. `environment`) fall back to their default instead of undefined.
+        setSettings({ ...defaultSettings, ...JSON.parse(storedSettings) });
       } catch (e) {
         console.error("Failed to parse stored expert settings", e);
       }
@@ -88,13 +92,13 @@ export const ExpertContextProvider = ({
 
   const saveSettings = () => {
     // Here we could perform validation if needed, but for now we just persist
-    localStorage.setItem("reclaim_expert_settings", JSON.stringify(settings));
+    localStorage.setItem(STORAGE_KEYS.expertSettings, JSON.stringify(settings));
     console.log("Expert settings saved:", settings);
   };
 
   const resetSettings = () => {
     setSettings(defaultSettings);
-    localStorage.removeItem("reclaim_expert_settings");
+    localStorage.removeItem(STORAGE_KEYS.expertSettings);
   };
 
   return (

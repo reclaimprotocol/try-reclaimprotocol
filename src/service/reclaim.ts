@@ -7,21 +7,35 @@ import {
   type VerifyProofResult,
 } from "@reclaimprotocol/js-sdk";
 import type { ExpertSettings } from "./expert";
+import {
+  RECLAIM_APP_ID,
+  RECLAIM_APP_SECRET,
+  getReclaimEnvUrl,
+  getReclaimPortalUrl,
+  type AppEnvironment,
+} from "../constants";
 
 export const YourBackendUsingReclaim = {
   /**
    * @deprecated This should happen on your backend
    *
    * @param providerId - The unique identifier of Reclaim's data provider
+   * @param environment - Which Reclaim backend to target ("production" | "staging")
    * @returns
    */
-  createVerificationRequest: async (providerId: string) => {
-    const reclaimAppId = import.meta.env.VITE_RECLAIM_APP_ID || "";
-    const reclaimAppSecret = import.meta.env.VITE_RECLAIM_APP_SECRET || "";
+  createVerificationRequest: async (
+    providerId: string,
+    environment: AppEnvironment,
+  ) => {
     const proofRequest = await ReclaimProofRequest.init(
-      reclaimAppId,
-      reclaimAppSecret,
+      RECLAIM_APP_ID,
+      RECLAIM_APP_SECRET,
       providerId,
+      {
+        // `undefined` in production => the SDK uses its built-in defaults.
+        envUrl: getReclaimEnvUrl(environment),
+        portalUrl: getReclaimPortalUrl(environment),
+      },
     );
 
     return proofRequest.toJsonString();
@@ -100,10 +114,8 @@ export const YourBackendUsingReclaim = {
     providerId: string,
     expertSettings: ExpertSettings,
   ) => {
-    const reclaimAppId =
-      expertSettings.appId || import.meta.env.VITE_RECLAIM_APP_ID || "";
-    const reclaimAppSecret =
-      expertSettings.appSecret || import.meta.env.VITE_RECLAIM_APP_SECRET || "";
+    const reclaimAppId = expertSettings.appId || RECLAIM_APP_ID;
+    const reclaimAppSecret = expertSettings.appSecret || RECLAIM_APP_SECRET;
 
     const proofRequest = await ReclaimProofRequest.init(
       reclaimAppId,
@@ -113,9 +125,11 @@ export const YourBackendUsingReclaim = {
         providerVersion: expertSettings.providerVersion
           ? expertSettings.providerVersion
           : undefined,
-        customSharePageUrl: expertSettings.sharePageUrl
-          ? expertSettings.sharePageUrl
-          : undefined,
+        // Explicit value wins; otherwise fall back to the active environment's
+        // portal (undefined in production => SDK default).
+        portalUrl:
+          expertSettings.sharePageUrl ||
+          getReclaimPortalUrl(expertSettings.environment),
         launchOptions: {
           canUseDeferredDeepLinksFlow:
             isMobileDevice() && expertSettings.useDeferredDeepLinksFlow
@@ -132,10 +146,10 @@ export const YourBackendUsingReclaim = {
         extensionID: expertSettings.extensionID
           ? expertSettings.extensionID
           : undefined,
+        // Explicit value wins; otherwise fall back to the active environment's
+        // backend (undefined in production => SDK default).
         envUrl:
-          expertSettings.envUrl && typeof expertSettings.envUrl === "string"
-            ? expertSettings.envUrl
-            : undefined,
+          expertSettings.envUrl || getReclaimEnvUrl(expertSettings.environment),
         useBrowserExtension:
           typeof expertSettings.useBrowserExtension === "boolean"
             ? expertSettings.useBrowserExtension

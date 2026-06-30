@@ -6,6 +6,7 @@ import {
   useSelectFromExpertSettings,
 } from "../contexts/ExpertContext";
 import { ModifiedExpertOptionsPreview } from "./ModifiedExpertOptionsPreview";
+import { LINKS } from "../constants";
 
 export const Navbar = () => {
   const { settings } = useExpertContext();
@@ -75,7 +76,7 @@ export const Navbar = () => {
       </div>
       <div className="flex gap-2">
         {/* Add more icons here */}
-        <GithubIcon href="https://github.com/reclaimprotocol/reclaim-demo-website-v3" />
+        <GithubIcon href={LINKS.repo} />
       </div>
     </nav>
   );

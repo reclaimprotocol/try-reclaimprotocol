@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useIsLargeScreen } from "../hooks/useIsLargeScreen";
+import { useBackendApiBaseUrl } from "../hooks/useEnvironment";
 import { fetchApplicationInfo, fetchProviderInfo } from "../service/backend";
 
 export const ProviderAppInfoTile = ({
@@ -11,13 +12,14 @@ export const ProviderAppInfoTile = ({
 }) => {
   const [applicationInfo, setApplicationInfo] = useState<any | null>(null);
   const [providerInfo, setProviderInfo] = useState<any | null>(null);
+  const baseUrl = useBackendApiBaseUrl();
 
   useEffect(() => {
-    fetchApplicationInfo(applicationId).then(setApplicationInfo);
-  }, [applicationId]);
+    fetchApplicationInfo(baseUrl, applicationId).then(setApplicationInfo);
+  }, [baseUrl, applicationId]);
   useEffect(() => {
-    fetchProviderInfo(providerId).then(setProviderInfo);
-  }, [providerId]);
+    fetchProviderInfo(baseUrl, providerId).then(setProviderInfo);
+  }, [baseUrl, providerId]);
 
   const isLoadingApplication = !applicationInfo;
   const isLoadingProvider = !providerInfo;

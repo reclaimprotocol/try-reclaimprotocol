@@ -332,3 +332,59 @@ body {
 .nav-link {
   font-size: 0.9rem;
 }
+
+/* ===== Staging environment chrome (warning banner + viewport frame) ===== */
+.staging-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.25rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  background-color: #f59e0b;
+  color: #1c1917;
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.staging-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  border: 3px solid #f59e0b;
+  pointer-events: none;
+}
+
+/* Make room for the fixed banner — only while staging is active */
+body.staging-active .navbar {
+  top: calc(1.5rem + 2.25rem);
+}
+
+body.staging-active .sub-container {
+  padding-top: calc(6rem + 2.25rem);
+}
+
+body.staging-active .container {
+  padding-top: calc(2rem + 2.25rem);
+}
+
+@media (max-width: 640px) {
+  body.staging-active .navbar {
+    top: calc(1rem + 2.25rem);
+  }
+
+  .staging-banner {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
+}
