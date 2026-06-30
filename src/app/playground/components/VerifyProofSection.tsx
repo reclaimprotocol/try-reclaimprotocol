@@ -1,5 +1,6 @@
 import { getProviderHashRequirementsFromSpec, getProviderHashRequirementSpecFromProviderConfig, verifyProof, type Proof, type ReclaimProviderConfigWithRequestSpec, type ValidationConfigWithHash, type ValidationConfigWithProviderInformation, type VerificationConfig } from "@reclaimprotocol/js-sdk";
 import { useState } from "react";
+import { RECLAIM_APP_SECRET } from "../../../constants";
 
 type ValidationMethodType = undefined | { type: 'provider', args: ValidationConfigWithProviderInformation } | { type: 'hash', args: ValidationConfigWithHash } | { type: 'spec', args: ReclaimProviderConfigWithRequestSpec };
 
@@ -45,7 +46,15 @@ export function VerifyProofSection() {
 
             const verificationResult = await verifyProof(
                 proofs,
-                { ...getVerificationOptions(), verifyTEE: isTEEVerificationRequired }
+                {
+                    ...getVerificationOptions(),
+                    // TEE attestation verification is now opt-in via `teeAttestation`,
+                    // which needs the app secret to recompute the attestation nonce.
+                    // (The previous boolean `verifyTEE` flag was removed in the SDK.)
+                    ...(isTEEVerificationRequired
+                        ? { teeAttestation: { appSecret: RECLAIM_APP_SECRET } }
+                        : {}),
+                }
             );
 
             if (!verificationResult.isVerified) {
