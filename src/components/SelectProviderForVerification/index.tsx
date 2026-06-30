@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./index.css";
 import StartVerificationButton from "../StartVerificationButton";
+import { API_ENDPOINTS, LINKS, STORAGE_KEYS } from "../../constants";
+import { useBackendApiBaseUrl } from "../../hooks/useEnvironment";
 
 interface Provider {
   httpProviderId: string;
@@ -9,13 +11,14 @@ interface Provider {
   logoUrl: string;
 }
 
-const getProvidersByQuery = async (query: string, abortSignal: AbortSignal) => {
-  let isVerifiedQuery = "";
-  if (!query.trim()) {
-    isVerifiedQuery = "&isVerified=true";
-  }
+const getProvidersByQuery = async (
+  baseUrl: string,
+  query: string,
+  abortSignal: AbortSignal,
+) => {
+  const trimmedQuery = query.trim();
   const res = await fetch(
-    `https://api.reclaimprotocol.org/api/providers/active/paginated?pageKey=0&pageSize=20&searchQuery=${encodeURIComponent(query.trim())}${isVerifiedQuery}`,
+    API_ENDPOINTS.searchProviders(baseUrl, trimmedQuery, !trimmedQuery),
     {
       signal: abortSignal,
     },
@@ -34,13 +37,16 @@ export default function SelectProviderForVerification() {
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
     null,
   );
+  const baseUrl = useBackendApiBaseUrl();
 
   useEffect(() => {
-    const savedProviderInfo = sessionStorage.getItem("savedProviderInfo");
+    const savedProviderInfo = sessionStorage.getItem(
+      STORAGE_KEYS.savedProviderInfo,
+    );
     if (savedProviderInfo) {
       setProviders(JSON.parse(savedProviderInfo));
     }
-    const savedProviderId = sessionStorage.getItem("providerId");
+    const savedProviderId = sessionStorage.getItem(STORAGE_KEYS.providerId);
     if (savedProviderId) {
       setQuery(savedProviderId);
     }
@@ -52,6 +58,7 @@ export default function SelectProviderForVerification() {
     const fetchProviders = async () => {
       try {
         const providers = await getProvidersByQuery(
+          baseUrl,
           query,
           abortController.signal,
         );
@@ -78,19 +85,22 @@ export default function SelectProviderForVerification() {
       clearTimeout(timeoutId);
       abortController.abort();
     };
-  }, [query]); // existing dependency
+  }, [query, baseUrl]); // re-query when the query or active environment changes
 
   const handleSelect = (provider: Provider) => {
     setQuery(provider.httpProviderId);
     setSelectedProvider(provider);
     setIsOpen(false);
-    sessionStorage.setItem("providerId", provider.httpProviderId);
-    sessionStorage.setItem("savedProviderInfo", JSON.stringify(provider));
+    sessionStorage.setItem(STORAGE_KEYS.providerId, provider.httpProviderId);
+    sessionStorage.setItem(
+      STORAGE_KEYS.savedProviderInfo,
+      JSON.stringify(provider),
+    );
   };
 
   const handleClear = () => {
-    sessionStorage.removeItem("providerId");
-    sessionStorage.removeItem("savedProviderInfo");
+    sessionStorage.removeItem(STORAGE_KEYS.providerId);
+    sessionStorage.removeItem(STORAGE_KEYS.savedProviderInfo);
     setQuery("");
     setSelectedProvider(null);
     setIsOpen(true);
@@ -155,9 +165,9 @@ export default function SelectProviderForVerification() {
                 setQuery(val);
                 if (typeof window !== "undefined") {
                   if (val) {
-                    sessionStorage.setItem("providerId", val);
+                    sessionStorage.setItem(STORAGE_KEYS.providerId, val);
                   } else {
-                    sessionStorage.removeItem("providerId");
+                    sessionStorage.removeItem(STORAGE_KEYS.providerId);
                   }
                 }
                 if (selectedProvider) setSelectedProvider(null);
@@ -199,7 +209,7 @@ export default function SelectProviderForVerification() {
                   Can't find what you're looking for? You can build your own
                   provider.{" "}
                   <a
-                    href="https://dev.reclaimprotocol.org"
+                    href={LINKS.devPortal}
                     className="link"
                     target="_blank"
                     rel="noreferrer"

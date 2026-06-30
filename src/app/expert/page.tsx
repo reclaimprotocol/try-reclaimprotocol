@@ -2,6 +2,11 @@ import "./index.css";
 import { useExpertContext } from "../../contexts/ExpertContext";
 import { showSnackbar } from "../../components/Snackbar";
 import { useNavigate } from "react-router";
+import {
+  getReclaimEnvUrl,
+  getReclaimPortalUrl,
+  type AppEnvironment,
+} from "../../constants";
 
 function Page() {
   const { settings, updateSettings, saveSettings, resetSettings } =
@@ -67,6 +72,36 @@ function Page() {
             <span className="slider"></span>
           </label>
         </div>
+      </div>
+
+      <div
+        className={`settings-card ${!settings.isExpertModeEnabled ? "disabled" : ""}`}
+      >
+        <div className="setting-title">Environment</div>
+        <div className="setting-desc">
+          Which Reclaim backend to target. Switching to Staging points the
+          provider search and verification flow at the staging backend and
+          portal, and fills in the Env URL and Share Page URL below (you can
+          still override them).
+        </div>
+        <select
+          className="input-tile"
+          value={settings.environment}
+          disabled={!settings.isExpertModeEnabled}
+          onChange={(e) => {
+            const next = e.target.value as AppEnvironment;
+            updateSettings({
+              environment: next,
+              // Auto-fill the URL fields so the change is visible; "" => SDK
+              // default (production).
+              envUrl: getReclaimEnvUrl(next) ?? "",
+              sharePageUrl: getReclaimPortalUrl(next) ?? "",
+            });
+          }}
+        >
+          <option value="production">Production</option>
+          <option value="staging">Staging</option>
+        </select>
       </div>
 
       <div

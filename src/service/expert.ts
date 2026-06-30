@@ -1,5 +1,12 @@
+import type { AppEnvironment } from "../constants";
+
 export interface ExpertSettings {
   isExpertModeEnabled: boolean;
+  /**
+   * Which Reclaim backend the app points at. Switched via the Expert-mode
+   * Environment toggle; defaults to "production".
+   */
+  environment: AppEnvironment;
   launchMethod: "none" | "js-sdk.portal" | "js-sdk.app" | "windowopen";
   callbackUrl: string;
   parameters: string; // JSON string

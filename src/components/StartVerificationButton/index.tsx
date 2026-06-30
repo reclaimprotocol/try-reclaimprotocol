@@ -3,6 +3,7 @@ import { YourBackendUsingReclaim } from "../../service/reclaim";
 import { useNavigate } from "react-router";
 import { showSnackbar } from "../Snackbar";
 import { useExpertContext } from "../../contexts/ExpertContext";
+import { useActiveEnvironment } from "../../hooks/useEnvironment";
 
 export interface StartVerificationButtonProps {
   providerId: string;
@@ -14,6 +15,7 @@ export default function StartVerificationButton({
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { settings } = useExpertContext();
+  const environment = useActiveEnvironment();
 
   const startVerification = async (providerId: string) => {
     try {
@@ -33,7 +35,10 @@ export default function StartVerificationButton({
           )
         : // This is the simple way to create a request.
           // If you are a beginner with Reclaim, we recommend using this.
-          YourBackendUsingReclaim.createVerificationRequest(providerId));
+          YourBackendUsingReclaim.createVerificationRequest(
+            providerId,
+            environment,
+          ));
 
       // For this example, we're navigating to a different page with this request to start verification journey
       // You don't have to do this base64 or url encoding at all. We did it just for putting this in query params.
