@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import "./index.css";
 import StartVerificationButton from "../StartVerificationButton";
 import { API_ENDPOINTS, LINKS, STORAGE_KEYS } from "../../constants";
-import { useBackendApiBaseUrl } from "../../hooks/useEnvironment";
+import {
+  useActiveEnvironment,
+  useBackendApiBaseUrl,
+} from "../../hooks/useEnvironment";
 
 interface Provider {
   httpProviderId: string;
@@ -38,19 +41,36 @@ export default function SelectProviderForVerification() {
     null,
   );
   const baseUrl = useBackendApiBaseUrl();
+  const activeEnv = useActiveEnvironment();
 
+  // Provider ids and results are environment-specific: a provider selected on
+  // production won't resolve against staging (and vice versa). We stamp the
+  // persisted selection with the environment it belongs to, then restore it
+  // only while the active environment still matches. When the environment
+  // changes (Expert-mode toggle or environment switch) the stale selection is
+  // dropped so the search starts clean instead of showing a cross-env mix.
   useEffect(() => {
-    const savedProviderInfo = sessionStorage.getItem(
-      STORAGE_KEYS.savedProviderInfo,
-    );
-    if (savedProviderInfo) {
-      setProviders(JSON.parse(savedProviderInfo));
+    const savedEnv = sessionStorage.getItem(STORAGE_KEYS.providerEnv);
+    if (savedEnv && savedEnv !== activeEnv) {
+      sessionStorage.removeItem(STORAGE_KEYS.providerId);
+      sessionStorage.removeItem(STORAGE_KEYS.savedProviderInfo);
+      setQuery("");
+      setSelectedProvider(null);
+      setProviders([]);
+    } else {
+      const savedProviderInfo = sessionStorage.getItem(
+        STORAGE_KEYS.savedProviderInfo,
+      );
+      if (savedProviderInfo) {
+        setProviders(JSON.parse(savedProviderInfo));
+      }
+      const savedProviderId = sessionStorage.getItem(STORAGE_KEYS.providerId);
+      if (savedProviderId) {
+        setQuery(savedProviderId);
+      }
     }
-    const savedProviderId = sessionStorage.getItem(STORAGE_KEYS.providerId);
-    if (savedProviderId) {
-      setQuery(savedProviderId);
-    }
-  }, []);
+    sessionStorage.setItem(STORAGE_KEYS.providerEnv, activeEnv);
+  }, [activeEnv]);
 
   useEffect(() => {
     const abortController = new AbortController();

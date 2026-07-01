@@ -100,4 +100,10 @@ export const STORAGE_KEYS = {
   providerId: "providerId",
   /** sessionStorage: full provider info object for the selected provider. */
   savedProviderInfo: "savedProviderInfo",
+  /**
+   * sessionStorage: the environment the saved provider selection belongs to.
+   * Provider ids/results are environment-specific, so a selection is only
+   * restored while the active environment still matches this stamp.
+   */
+  providerEnv: "providerEnv",
 } as const;

@@ -27,6 +27,8 @@ export const YourBackendUsingReclaim = {
     providerId: string,
     environment: AppEnvironment,
   ) => {
+    const portalUrl = getReclaimPortalUrl(environment);
+
     const proofRequest = await ReclaimProofRequest.init(
       RECLAIM_APP_ID,
       RECLAIM_APP_SECRET,
@@ -34,9 +36,18 @@ export const YourBackendUsingReclaim = {
       {
         // `undefined` in production => the SDK uses its built-in defaults.
         envUrl: getReclaimEnvUrl(environment),
-        portalUrl: getReclaimPortalUrl(environment),
+        portalUrl,
       },
     );
+
+    // The SDK requires an explicit app callback URL whenever a custom
+    // (non-default) share page is used — e.g. the staging portal. Pin it to the
+    // SDK's own default callback (derived from `envUrl`): this satisfies the
+    // requirement while keeping the polling-based `onSuccess` flow intact, since
+    // the value still equals the default the SDK would have used.
+    if (portalUrl) {
+      proofRequest.setAppCallbackUrl(proofRequest.getAppCallbackUrl());
+    }
 
     return proofRequest.toJsonString();
   },
@@ -164,6 +175,15 @@ export const YourBackendUsingReclaim = {
 
     if (expertSettings.callbackUrl) {
       proofRequest.setAppCallbackUrl(expertSettings.callbackUrl, true);
+    } else if (
+      expertSettings.sharePageUrl ||
+      getReclaimPortalUrl(expertSettings.environment)
+    ) {
+      // A custom share page (explicit `sharePageUrl` or the staging portal)
+      // requires an explicit app callback URL. Fall back to the SDK's own
+      // default callback (derived from `envUrl`) so the standard polling-based
+      // flow keeps working without the developer having to stand up a backend.
+      proofRequest.setAppCallbackUrl(proofRequest.getAppCallbackUrl());
     }
 
     if (expertSettings.redirectUrl) {
